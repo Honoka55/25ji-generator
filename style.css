@@ -1,0 +1,212 @@
+@import 'https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&display=swap';
+@font-face {
+    font-family: kana;
+    src: url(kana.woff) format('woff');
+}
+@font-face {
+    font-family: figure;
+    src: url(figure.woff) format('woff');
+}
+@font-face {
+    font-family: kanji;
+    src: url(kanji.woff2) format('woff2');
+}
+
+:root {
+    --zh-font-family: 'Source Han Sans', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Heiti SC', SimHei;
+}
+
+body {
+    font-family: Andika, var(--zh-font-family), sans-serif;
+    background-color: #87c5c1;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1 {
+    color: #849;
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#nightcord {
+    font-family: kanji;
+}
+#copyright {
+    font-size: 12px;
+    font-weight: normal;
+    color: #111;
+    text-align: center;
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+#copyright > span {
+    vertical-align: middle;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 25px;
+    height: 12px;
+    vertical-align: middle;
+}
+.switch input {
+    display: none;
+}
+.switch-toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+.switch-toggle::before {
+    content: '';
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    left: 1px;
+    bottom: 1px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+.switch input:checked + .switch-toggle {
+    background-color: #849;
+}
+.switch input:checked + .switch-toggle::before {
+    transform: translateX(13px);
+}
+
+#input-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+input,
+select {
+    font-family: Andika, var(--zh-font-family), sans-serif;
+    padding: 8px;
+    margin: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    position: relative;
+    vertical-align: middle;
+}
+#text1:focus {
+    outline-color: #88c;
+}
+#text2:focus {
+    outline-color: #b68;
+}
+#ten:focus {
+    outline-color: #dac;
+}
+#text3:focus {
+    outline-color: #ca8;
+}
+
+input[type='range'] {
+    width: 280px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    border-radius: 18px;
+    background: #e0dcdd;
+    margin: 4px;
+    vertical-align: middle;
+}
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3cb;
+    cursor: pointer;
+}
+input[type='range'][disabled]::-webkit-slider-thumb {
+    background-color: #bcc;
+    cursor: not-allowed;
+}
+input[type='range']::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3cb;
+    cursor: pointer;
+}
+
+button,
+#download-btn {
+    font-family: Andika, var(--zh-font-family), sans-serif;
+    display: inline-block;
+    padding: 5px 18px;
+    margin: 4px;
+    background-color: #849;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    vertical-align: middle;
+}
+button:hover,
+#download-btn:hover {
+    background-color: #6a3377;
+}
+button[disabled],
+#download-btn[disabled] {
+    background-color: #ccc;
+    color: #666;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+#canvas-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+#canvas-container canvas {
+    background-color: #fff;
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 0, transparent 75%, #ccc 0), linear-gradient(45deg, #ccc 25%, transparent 0, transparent 75%, #ccc 0);
+    background-position: 0 0, 8px 8px;
+    background-size: 16px 16px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+a:not(#download-btn) {
+    box-shadow: 0 -2px rgba(209, 159, 254, 0.5) inset;
+    transition: all 0.5s ease;
+    text-decoration: none;
+    color: #363169;
+}
+a:not(#download-btn):hover {
+    cursor: pointer;
+    box-shadow: 0px -1.85rem 0px rgba(209, 159, 254, 0.7) inset;
+}
+
+@media (max-width: 600px) {
+    #input-container {
+        width: 90%;
+    }
+}

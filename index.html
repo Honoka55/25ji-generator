@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25时logo生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>
+        <span id="nightcord">❖</span>
+        <span style="font-family:figure;font-size:54px"><span style="font-feature-settings:'sups'">2</span>5</span>时<span style="font-family:kana">logo</span>生成器
+        <div id="copyright" style="max-height:0">
+            <span>
+                Copyright &copy; 2024 <a href="https://honoka55.github.io">Honoka55</a> |
+                <a href="https://github.com/Honoka55/25ji-generator">Repo</a> |
+                <a href="https://afdian.net/a/honoka55">Donate</a> |
+            </span>
+            <div class="switch">
+                <input type="checkbox" id="watermark" checked>
+                <label for="watermark" id="watermark-toggle" class="switch-toggle"></label>
+            </div> <span>Watermark</span>
+        </div>
+    </h1>
+    <div id="input-container">
+        <input type="number" id="text1" min="0" max="2999" step="1" style="width:50px" required value="25">
+        <input type="text" id="text2" maxlength="3" style="width:50px" required value="時">
+        <select id="ten">
+            <option value="、" selected>、</option>
+            <option value="，">，</option>
+        </select>
+        <input type="text" id="text3" maxlength="13" style="width:200px" required value="ナイトコードで"> 。<br>
+        <button id="submit-btn" disabled>生成</button>
+        <a id="download-btn" download="logo.png" href="#" disabled>保存</a>
+        <input type="range" id="slider" min="0" max="0" step="1" value="0" disabled>
+    </div>
+    <div id="canvas-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
