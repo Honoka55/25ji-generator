@@ -199,7 +199,7 @@ window.onload = () => {
                         for (let [i, char] of [...text3].entries()) {
                             if (i == 0) {
                                 let newChar = String.fromCharCode(char.charCodeAt(0) + 0xb000);
-                                if (kanaFont.charToGlyph(newChar).unicode && text2.length < 3) {
+                                if (char.charCodeAt(0) + 0xb000 >= 0xe000 && char.charCodeAt(0) + 0xb000 <= 0xf8ff && kanaFont.charToGlyph(newChar).unicode && text2.length < 3) {
                                     char = newChar;
                                 } else {
                                     textX -= 16;
