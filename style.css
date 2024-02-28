@@ -153,8 +153,7 @@ input[type='range']::-moz-range-thumb {
     cursor: pointer;
 }
 
-button,
-#download-btn {
+button {
     font-family: Andika, var(--zh-font-family), sans-serif;
     display: inline-block;
     padding: 5px 18px;
@@ -169,12 +168,10 @@ button,
     transition: background-color 0.3s;
     vertical-align: middle;
 }
-button:hover,
-#download-btn:hover {
+button:hover {
     background-color: #6a3377;
 }
-button[disabled],
-#download-btn[disabled] {
+button[disabled] {
     background-color: #ccc;
     color: #666;
     pointer-events: none;
@@ -205,8 +202,53 @@ a:not(#download-btn):hover {
     box-shadow: 0px -1.85rem 0px rgba(209, 159, 254, 0.7) inset;
 }
 
-@media (max-width: 600px) {
-    #input-container {
-        width: 90%;
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+#popup {
+    background-color: #cdebe9;
+    position: relative;
+    max-width: 80%;
+    max-height: 80%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+#popup img {
+    width: calc(100% - 40px);
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+#close-btn {
+    font-size: 18px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #ff6059;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+@media (max-width: 576px) {
+    #popup img {
+        width: 100%;
+    }
+    #close-btn {
+        display: none;
     }
 }

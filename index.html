@@ -11,7 +11,8 @@
 <body>
     <h1>
         <span id="nightcord">❖</span>
-        <span style="font-family:figure;font-size:54px"><span style="font-feature-settings:'sups'">2</span>5</span>时<span style="font-family:kana">logo</span>生成器
+        <span style="font-family:figure;font-size:54px"><span
+                style="font-feature-settings:'sups'">2</span>5</span>时<span style="font-family:kana">logo</span>生成器
         <div id="copyright" style="max-height:0">
             <span>
                 Copyright &copy; 2024 <a href="https://honoka55.github.io">Honoka55</a> |
@@ -33,10 +34,13 @@
         </select>
         <input type="text" id="text3" maxlength="13" style="width:200px" required value="ナイトコードで"> 。<br>
         <button id="submit-btn" disabled>生成</button>
-        <a id="download-btn" download="logo.png" href="#" disabled>保存</a>
+        <button id="download-btn" disabled>保存</button>
         <input type="range" id="slider" min="0" max="0" step="1" value="0" disabled>
     </div>
     <div id="canvas-container"></div>
+    <div id="overlay" style="display:none">
+        <div id="popup"></div>
+    </div>
     <script src="https://opentype.js.org/dist/opentype.min.js"></script>
     <script src="script.js"></script>
 </body>

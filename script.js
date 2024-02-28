@@ -10,6 +10,8 @@ const nightcord = document.getElementById('nightcord');
 const copyright = document.getElementById('copyright');
 const watermark = document.getElementById('watermark');
 const switchToggle = document.getElementById('watermark-toggle');
+const overlay = document.getElementById('overlay');
+const popup = document.getElementById('popup');
 
 text1Input.addEventListener('focus', () => {
     text1Input.previousValue = text1Input.value;
@@ -252,8 +254,19 @@ window.onload = () => {
                                 ctx.font = '13px kana';
                                 ctx.fillText('honoka55.github.io/25ji-generator', canvas.width - 210, 16);
                             }
-                            const dataURL = canvas.toDataURL('image/png');
-                            downloadBtn.href = dataURL;
+
+                            const img = new Image();
+                            img.src = canvas.toDataURL('image/png');
+                            popup.innerHTML = '<span id="close-btn">×</span>';
+                            const closeButton = document.getElementById('close-btn');
+                            popup.appendChild(img);
+                            overlay.addEventListener('click', (e) => {
+                                if (e.target === overlay || e.target === closeButton) {
+                                    overlay.style.display = 'none';
+                                }
+                            });
+                            overlay.style.display = 'flex';
+
                             ctx.clearRect(canvas.width - 210, 0, canvas.width, 20);
                         });
 
