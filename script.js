@@ -14,6 +14,7 @@ const transparentText = document.getElementById('transparent-text');
 const colorPicker = document.getElementById('color-picker');
 const overlay = document.getElementById('overlay');
 const popup = document.getElementById('popup');
+let firstTime = true;
 
 text1Input.addEventListener('focus', () => {
     text1Input.previousValue = text1Input.value;
@@ -340,12 +341,15 @@ window.onload = () => {
                         const ten = tenSelect.value;
                         const text3 = text3Input.value;
                         generateLogo(text1, text2, ten, text3, parseInt(slider.value));
+                        if (firstTime) {
+                            firstTime = false;
+                            watermarkCheck.addEventListener('change', submit);
+                            transparentCheck.addEventListener('change', submit);
+                            colorPicker.addEventListener('input', submit);
+                        }
                     };
 
                     submitBtn.addEventListener('click', submit);
-                    watermarkCheck.addEventListener('change', submit);
-                    transparentCheck.addEventListener('change', submit);
-                    colorPicker.addEventListener('input', submit);
 
                     slider.addEventListener('input', () => {
                         generateLogo(slider.getAttribute('text1'), slider.getAttribute('text2'), slider.getAttribute('ten'), slider.getAttribute('text3'), parseInt(slider.value));
