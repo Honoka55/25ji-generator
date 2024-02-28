@@ -230,8 +230,26 @@ window.onload = () => {
                             [drawTriangle, hikari1X - 93, 224, hikari1X - 87, 223, hikari1X - 89, 235]
                         ]);
 
+                        const sliderMin = Math.round(tenX + 180);
+                        const sliderMax = Math.round(textX + 33);
+                        const sliderValue = Math.max(sliderMin, Math.min(sliderMax, Math.round(textX - 0.18 * (textX - tenX))));
+                        slider.setAttribute('min', sliderMin);
+                        slider.setAttribute('max', sliderMax);
+                        slider.setAttribute('value', sliderValue);
+                        slider.setAttribute('text1', text1);
+                        slider.setAttribute('text2', text2);
+                        slider.setAttribute('ten', ten);
+                        slider.setAttribute('text3', text3);
+                        slider.removeAttribute('disabled');
+
                         if (!hikari2X) {
-                            hikari2X = textX - 0.18 * (textX - tenX);
+                            hikari2X = sliderValue;
+                        }
+                        if (hikari2X < sliderMin) {
+                            hikari2X = sliderMin;
+                        }
+                        if (hikari2X > sliderMax) {
+                            hikari2X = sliderMax;
                         }
                         drawSet([
                             [drawHikari, hikari2X - 150, 156, 1],
@@ -269,15 +287,6 @@ window.onload = () => {
 
                             ctx.clearRect(canvas.width - 210, 0, canvas.width, 20);
                         });
-
-                        slider.setAttribute('min', Math.round(tenX + 180));
-                        slider.setAttribute('max', canvas.width - 40);
-                        slider.setAttribute('value', Math.round(hikari2X));
-                        slider.setAttribute('text1', text1);
-                        slider.setAttribute('text2', text2);
-                        slider.setAttribute('ten', ten);
-                        slider.setAttribute('text3', text3);
-                        slider.removeAttribute('disabled');
 
                         nightcord.style.cursor = 'pointer';
                         nightcord.addEventListener('click', () => {
