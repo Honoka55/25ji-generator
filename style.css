@@ -13,11 +13,13 @@
 }
 
 :root {
-    --zh-font-family: 'Source Han Sans', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Heiti SC', SimHei;
+    --zh-hans-font-family: 'Source Han Sans', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Heiti SC', SimHei;
+    --zh-hant-font-family: 'Source Han Sans', 'Noto Sans HK', 'Noto Sans TC', 'PingFang HK', 'PingFang TC', 'Hiragino Sans CNS', 'Microsoft JhengHei', 'Heiti TC';
+    --ja-font-family: 'Source Han Sans', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Kaku Gothic Pro', 'Meiryo', 'Yu Gothic', 'MS PGothic';
+    --ko-font-family: 'Source Han Sans', 'Noto Sans KR', 'Apple SD Gothic Neo', NanumBarunGothic, 'Malgun Gothic', Dotum;
 }
 
 body {
-    font-family: Andika, var(--zh-font-family), sans-serif;
     background-color: #87c5c1;
     margin: 0;
     padding: 0;
@@ -26,6 +28,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    user-select: none;
 }
 
 h1 {
@@ -33,16 +36,45 @@ h1 {
     font-size: 42px;
     text-align: center;
     margin-bottom: 0;
+    font-family: figure, kana, kanji;
+    font-weight: normal;
+    white-space: nowrap;
 }
 
-#nightcord {
-    font-family: kanji;
+body:lang(zh-hans),
+#copyright:lang(zh-hans),
+input:lang(zh-hans),
+select:lang(zh-hans),
+button:lang(zh-hans) {
+    font-family: Andika, var(--zh-hans-font-family), sans-serif;
 }
+body:lang(zh-hant),
+#copyright:lang(zh-hant),
+input:lang(zh-hant),
+select:lang(zh-hant),
+button:lang(zh-hant) {
+    font-family: Andika, var(--zh-hant-font-family), sans-serif;
+}
+body:lang(ja),
+#copyright:lang(ja),
+input:lang(ja),
+select:lang(ja),
+button:lang(ja) {
+    font-family: Andika, var(--ja-font-family), sans-serif;
+}
+body:lang(ko),
+#copyright:lang(ko),
+input:lang(ko),
+select:lang(ko),
+button:lang(ko) {
+    font-family: Andika, var(--ko-font-family), sans-serif;
+}
+
 #copyright {
     font-size: 12px;
-    font-weight: normal;
     color: #111;
     text-align: center;
+    margin-top: 7px;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
 }
@@ -100,7 +132,6 @@ h1 {
 
 input,
 select {
-    font-family: Andika, var(--zh-font-family), sans-serif;
     padding: 8px;
     margin: 4px;
     border: 1px solid #ccc;
@@ -153,6 +184,14 @@ input[type='range']::-moz-range-thumb {
     cursor: pointer;
 }
 
+#language {
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
 #transparent-switch {
     width: 50px;
     height: 24px;
@@ -170,6 +209,15 @@ input[type='range']::-moz-range-thumb {
     transform: translateX(26px);
 }
 
+#transparent-text {
+    display: inline-block;
+    width: 70px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
 input[type='color'] {
     -webkit-appearance: none;
     appearance: none;
@@ -181,7 +229,6 @@ input[type='color'] {
 }
 
 button {
-    font-family: Andika, var(--zh-font-family), sans-serif;
     display: inline-block;
     padding: 5px 18px;
     margin: 4px;
@@ -192,6 +239,7 @@ button {
     text-decoration: none;
     cursor: pointer;
     font-size: 16px;
+    width: 68px;
     transition: background-color 0.3s;
     vertical-align: middle;
 }
@@ -274,6 +322,15 @@ a:not(#download-btn):hover {
 }
 
 @media (max-width: 576px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    #copyright,
+    #language {
+        font-size: 10px;
+    }
+
     #popup img {
         width: 100%;
     }

@@ -41,10 +41,12 @@ const nightcordEvent = () => {
 
 transparentCheck.addEventListener('change', () => {
     if (transparentCheck.checked) {
-        transparentText.textContent = '透明背景';
+        transparentText.dataset.i18n = 'transparent-background';
+        transparentText.textContent = i18n.getText('transparent-background');
         colorPicker.style.visibility = 'hidden';
     } else {
-        transparentText.textContent = '背景色：';
+        transparentText.dataset.i18n = 'background-color';
+        transparentText.textContent = i18n.getText('background-color');
         colorPicker.style.visibility = 'visible';
     }
 });
@@ -302,7 +304,8 @@ window.onload = () => {
                         canvas.width = textX + 73;
                         ctx.putImageData(data, 0, 0);
 
-                        submitBtn.textContent = '更新';
+                        submitBtn.dataset.i18n = 'submit-btn-update';
+                        submitBtn.textContent = i18n.getText('submit-btn-update');
 
                         downloadBtn.removeAttribute('disabled');
                         downloadBtn.addEventListener('click', () => {
