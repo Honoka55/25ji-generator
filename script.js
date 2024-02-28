@@ -276,8 +276,8 @@ window.onload = () => {
                             [drawTriangle, hikari1X - 93, 224, hikari1X - 87, 223, hikari1X - 89, 235]
                         ]);
 
-                        const sliderMin = Math.round(tenX + 180);
                         const sliderMax = Math.round(textX + 33);
+                        const sliderMin = Math.min(sliderMax, Math.round(tenX + 180));
                         const sliderValue = Math.max(sliderMin, Math.min(sliderMax, Math.round(textX - 0.18 * (textX - tenX))));
                         slider.setAttribute('min', sliderMin);
                         slider.setAttribute('max', sliderMax);

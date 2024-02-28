@@ -28,6 +28,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -155,6 +156,7 @@ select {
 input[type='range'] {
     width: 280px;
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     height: 18px;
     border-radius: 18px;
@@ -164,6 +166,7 @@ input[type='range'] {
 }
 input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     width: 20px;
     height: 20px;
@@ -219,6 +222,7 @@ input[type='range']::-moz-range-thumb {
 
 input[type='color'] {
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     width: 28px;
     height: 28px;
@@ -335,6 +339,11 @@ a:not(#download-btn):hover {
     }
     #close-btn {
         display: none;
+    }
+
+    #input-container {
+        padding: 20px 6px;
+        text-align: center;
     }
 
     input[type='range'] {
