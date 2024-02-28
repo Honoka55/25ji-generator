@@ -71,6 +71,11 @@ window.onload = () => {
                     submitBtn.removeAttribute('disabled');
 
                     const generateLogo = (text1, text2, ten, text3, hikari2X = false) => {
+                        slider.setAttribute('text1', text1);
+                        slider.setAttribute('text2', text2);
+                        slider.setAttribute('ten', ten);
+                        slider.setAttribute('text3', text3);
+
                         canvasContainer.innerHTML = '';
                         const canvas = document.createElement('canvas');
                         canvas.width = 2000;
@@ -238,7 +243,7 @@ window.onload = () => {
                             rdIndex.push(text3.indexOf('cord') + 2);
                             rdIndex.push(text3.indexOf('cord') + 3);
                         }
-                        text3 = text3.replace(/Night/g, 'Ni󰁧ht');
+                        text3 = text3.replace(/gg/g, '󰁧g');
                         for (let [i, char] of [...text3].entries()) {
                             if (i == 0) {
                                 let newChar = String.fromCharCode(char.charCodeAt(0) + 0xb000);
@@ -277,10 +282,6 @@ window.onload = () => {
                         slider.setAttribute('min', sliderMin);
                         slider.setAttribute('max', sliderMax);
                         slider.setAttribute('value', sliderValue);
-                        slider.setAttribute('text1', text1);
-                        slider.setAttribute('text2', text2);
-                        slider.setAttribute('ten', ten);
-                        slider.setAttribute('text3', text3);
                         slider.removeAttribute('disabled');
 
                         if (!hikari2X) {

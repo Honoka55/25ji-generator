@@ -2,21 +2,25 @@ const i18n = {
     data: {
         'zh-hans': {
             'title': '25点，logo生成器见。',
-            'header': '点，lo󰁧o生成器见。',
+            'header': '点，logo生成器见。',
             'transparent-background': '透明背景',
             'background-color': '背景色：',
             'submit-btn': '生成',
             'submit-btn-update': '更新',
-            'download-btn': '保存'
+            'download-btn': '保存',
+            'font-min': '宋体',
+            'font-kai': '楷体'
         },
         'zh-hant': {
             'title': '25點，logo產生器見。',
-            'header': '點，lo󰁧o產生器見。',
+            'header': '點，logo產生器見。',
             'transparent-background': '透明背景',
             'background-color': '背景色：',
             'submit-btn': '產生',
             'submit-btn-update': '更新',
-            'download-btn': '儲存'
+            'download-btn': '儲存',
+            'font-min': '宋體',
+            'font-kai': '楷體'
         },
         'ja': {
             'title': '25時、ロゴジェネレーターで。',
@@ -25,7 +29,9 @@ const i18n = {
             'background-color': '背景色：',
             'submit-btn': '作成',
             'submit-btn-update': '更新',
-            'download-btn': '保存'
+            'download-btn': '保存',
+            'font-min': '明朝体',
+            'font-kai': '楷書体'
         },
         'ko': {
             'title': '25시, 로고 제너레이터에서.',
@@ -34,7 +40,9 @@ const i18n = {
             'background-color': '배경색:',
             'submit-btn': '작성',
             'submit-btn-update': '경신',
-            'download-btn': '저장'
+            'download-btn': '저장',
+            'font-min': '명조체',
+            'font-kai': '해서체'
         }
     },
     currentLanguage: '',
