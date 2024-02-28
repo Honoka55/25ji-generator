@@ -307,8 +307,10 @@ window.onload = () => {
                         downloadBtn.removeAttribute('disabled');
                         downloadBtn.addEventListener('click', () => {
                             if (watermarkCheck.checked) {
-                                ctx.font = '13px kana';
-                                ctx.fillText('honoka55.github.io/25ji-generator', canvas.width - 210, 16);
+                                ctx.font = '17px figure';
+                                ctx.globalAlpha = 0.7;
+                                ctx.fillText('焰', canvas.width - 205, 15);
+                                ctx.globalAlpha = 1;
                             }
 
                             const img = new Image();
@@ -318,10 +320,10 @@ window.onload = () => {
                             overlay.style.display = 'flex';
 
                             if (transparentCheck.checked) {
-                                ctx.clearRect(canvas.width - 210, 0, canvas.width, 20);
+                                ctx.clearRect(canvas.width - 205, 0, canvas.width, 20);
                             } else {
                                 ctx.fillStyle = colorPicker.value;
-                                ctx.fillRect(canvas.width - 210, 0, canvas.width, 20);
+                                ctx.fillRect(canvas.width - 205, 0, canvas.width, 20);
                             }
                         });
 
