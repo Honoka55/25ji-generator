@@ -33,6 +33,14 @@
             <option value="，">，</option>
         </select>
         <input type="text" id="text3" maxlength="13" style="width:200px" required value="ナイトコードで"> 。<br>
+
+        <div class="switch" id="transparent-switch">
+            <input type="checkbox" id="transparent" checked>
+            <label for="transparent" id="transparent-toggle" class="switch-toggle"></label>
+        </div>
+        <span id="transparent-text">透明背景</span>
+        <input type="color" id="color-picker" value="#ffffff" style="visibility:hidden">
+        <br>
         <button id="submit-btn" disabled>生成</button>
         <button id="download-btn" disabled>保存</button>
         <input type="range" id="slider" min="0" max="0" step="1" value="0" disabled>

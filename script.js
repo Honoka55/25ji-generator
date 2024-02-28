@@ -8,8 +8,10 @@ const submitBtn = document.getElementById('submit-btn');
 const downloadBtn = document.getElementById('download-btn');
 const nightcord = document.getElementById('nightcord');
 const copyright = document.getElementById('copyright');
-const watermark = document.getElementById('watermark');
-const switchToggle = document.getElementById('watermark-toggle');
+const watermarkCheck = document.getElementById('watermark');
+const transparentCheck = document.getElementById('transparent');
+const transparentText = document.getElementById('transparent-text');
+const colorPicker = document.getElementById('color-picker');
 const overlay = document.getElementById('overlay');
 const popup = document.getElementById('popup');
 
@@ -26,6 +28,31 @@ text1Input.addEventListener('input', () => {
     }
     if (!text1Input.validity.valid) {
         text1Input.value = text1Input.previousValue;
+    }
+});
+
+const nightcordEvent = () => {
+    if (copyright.style.maxHeight == '0px') {
+        copyright.style.maxHeight = copyright.scrollHeight + 'px';
+    } else {
+        copyright.style.maxHeight = '0px';
+    }
+};
+
+transparentCheck.addEventListener('change', () => {
+    if (transparentCheck.checked) {
+        transparentText.textContent = '透明背景';
+        colorPicker.style.visibility = 'hidden';
+    } else {
+        transparentText.textContent = '背景色：';
+        colorPicker.style.visibility = 'visible';
+    }
+});
+
+overlay.addEventListener('click', (e) => {
+    const closeButton = document.getElementById('close-btn');
+    if (e.target === overlay || e.target === closeButton) {
+        overlay.style.display = 'none';
     }
 });
 
@@ -49,11 +76,22 @@ window.onload = () => {
                         const ctx = canvas.getContext('2d');
 
                         ctx.lineWidth = 16;
-                        const strokeErase = () => {
-                            ctx.globalCompositeOperation = 'destination-out';
-                            ctx.stroke();
-                            ctx.globalCompositeOperation = 'source-over';
-                        };
+                        let strokeErase;
+
+                        if (transparentCheck.checked) {
+                            strokeErase = () => {
+                                ctx.globalCompositeOperation = 'destination-out';
+                                ctx.stroke();
+                                ctx.globalCompositeOperation = 'source-over';
+                            };
+                        } else {
+                            ctx.fillStyle = colorPicker.value;
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            strokeErase = () => {
+                                ctx.strokeStyle = colorPicker.value;
+                                ctx.stroke();
+                            };
+                        }
 
                         const drawGradientChar = (char, charX, charY) => {
                             const measure = ctx.measureText(char);
@@ -268,7 +306,7 @@ window.onload = () => {
 
                         downloadBtn.removeAttribute('disabled');
                         downloadBtn.addEventListener('click', () => {
-                            if (watermark.checked) {
+                            if (watermarkCheck.checked) {
                                 ctx.font = '13px kana';
                                 ctx.fillText('honoka55.github.io/25ji-generator', canvas.width - 210, 16);
                             }
@@ -276,26 +314,19 @@ window.onload = () => {
                             const img = new Image();
                             img.src = canvas.toDataURL('image/png');
                             popup.innerHTML = '<span id="close-btn">×</span>';
-                            const closeButton = document.getElementById('close-btn');
                             popup.appendChild(img);
-                            overlay.addEventListener('click', (e) => {
-                                if (e.target === overlay || e.target === closeButton) {
-                                    overlay.style.display = 'none';
-                                }
-                            });
                             overlay.style.display = 'flex';
 
-                            ctx.clearRect(canvas.width - 210, 0, canvas.width, 20);
+                            if (transparentCheck.checked) {
+                                ctx.clearRect(canvas.width - 210, 0, canvas.width, 20);
+                            } else {
+                                ctx.fillStyle = colorPicker.value;
+                                ctx.fillRect(canvas.width - 210, 0, canvas.width, 20);
+                            }
                         });
 
                         nightcord.style.cursor = 'pointer';
-                        nightcord.addEventListener('click', () => {
-                            if (copyright.style.maxHeight == '0px') {
-                                copyright.style.maxHeight = copyright.scrollHeight + 'px';
-                            } else {
-                                copyright.style.maxHeight = '0px';
-                            }
-                        });
+                        nightcord.addEventListener('click', nightcordEvent);
                     };
 
                     const submit = () => {
@@ -306,17 +337,10 @@ window.onload = () => {
                         generateLogo(text1, text2, ten, text3, parseInt(slider.value));
                     };
 
-                    submitBtn.addEventListener('click', () => {
-                        submit();
-                    });
-
-                    watermark.addEventListener('change', function () {
-                        if (this.checked) {
-                            switchToggle.style.backgroundColor = '#884499';
-                        } else {
-                            switchToggle.style.backgroundColor = '#ccc';
-                        }
-                    });
+                    submitBtn.addEventListener('click', submit);
+                    watermarkCheck.addEventListener('change', submit);
+                    transparentCheck.addEventListener('change', submit);
+                    colorPicker.addEventListener('input', submit);
 
                     slider.addEventListener('input', () => {
                         generateLogo(slider.getAttribute('text1'), slider.getAttribute('text2'), slider.getAttribute('ten'), slider.getAttribute('text3'), parseInt(slider.value));

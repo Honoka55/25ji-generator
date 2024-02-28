@@ -153,6 +153,33 @@ input[type='range']::-moz-range-thumb {
     cursor: pointer;
 }
 
+#transparent-switch {
+    width: 50px;
+    height: 24px;
+}
+#transparent-toggle {
+    border-radius: 12px;
+}
+#transparent-toggle::before {
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+}
+#transparent-switch input:checked + #transparent-toggle::before {
+    transform: translateX(26px);
+}
+
+input[type='color'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    background-color: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
 button {
     font-family: Andika, var(--zh-font-family), sans-serif;
     display: inline-block;
