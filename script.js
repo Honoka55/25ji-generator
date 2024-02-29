@@ -1,4 +1,5 @@
 const canvasContainer = document.getElementById('canvas-container');
+const h1 = document.querySelector('h1');
 const text1Input = document.getElementById('text1');
 const text2Input = document.getElementById('text2');
 const tenSelect = document.getElementById('ten');
@@ -12,9 +13,11 @@ const watermarkCheck = document.getElementById('watermark');
 const transparentCheck = document.getElementById('transparent');
 const transparentText = document.getElementById('transparent-text');
 const colorPicker = document.getElementById('color-picker');
+const fontSelector = document.querySelectorAll('input[type="radio"][name="kanji-font"]');
 const overlay = document.getElementById('overlay');
 const popup = document.getElementById('popup');
 let firstTime = true;
+let currentFont = 'kanji';
 
 text1Input.addEventListener('focus', () => {
     text1Input.previousValue = text1Input.value;
@@ -50,6 +53,20 @@ transparentCheck.addEventListener('change', () => {
         transparentText.textContent = i18n.getText('background-color');
         colorPicker.style.visibility = 'visible';
     }
+});
+
+fontSelector.forEach((radio) => {
+    radio.addEventListener('change', () => {
+        if (radio.checked) {
+            if (radio.value === 'min') {
+                h1.style.fontFamily = 'figure,kana,kanji';
+                currentFont = 'kanji';
+            } else if (radio.value === 'kai') {
+                h1.style.fontFamily = 'figure,kana,kai,kanji';
+                currentFont = 'kai, kanji';
+            }
+        }
+    });
 });
 
 overlay.addEventListener('click', (e) => {
@@ -206,7 +223,7 @@ window.onload = () => {
                         const hikari1X = textX + 76.58;
 
                         ctx.fillStyle = '#000';
-                        ctx.font = '90px kana, kanji, serif';
+                        ctx.font = `90px kana, ${currentFont}, serif`;
                         textX = hikari1X - 77;
                         let textY = 230;
                         let tenX = textX;
@@ -236,7 +253,7 @@ window.onload = () => {
                         ctx.fillText(ten, tenX, tenY);
                         textX = tenX + 54;
 
-                        ctx.font = '99px kana, kanji, serif';
+                        ctx.font = `99px kana, ${currentFont}, serif`;
                         textY = 240;
                         let rdIndex = [text3.length - 1];
                         if (text3.indexOf('cord') != -1) {

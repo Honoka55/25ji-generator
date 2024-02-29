@@ -11,6 +11,10 @@
     font-family: kanji;
     src: url(kanji.woff2) format('woff2');
 }
+@font-face {
+    font-family: kai;
+    src: url(kai.woff2) format('woff2');
+}
 
 :root {
     --zh-hans-font-family: 'Source Han Sans', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Heiti SC', SimHei;
@@ -229,6 +233,34 @@ input[type='color'] {
     background-color: transparent;
     padding: 0;
     cursor: pointer;
+}
+
+.font-selector {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+input[type='radio'] {
+    display: none;
+}
+
+.font-selector label {
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    margin: -2.5px;
+    padding: 1.3px 0;
+    width: 68px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+}
+.font-selector label:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+input[type='radio']:checked + label {
+    background-color: #849;
+    color: #fff;
 }
 
 button {

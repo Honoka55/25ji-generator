@@ -33,13 +33,13 @@
         </div>
     </h1>
     <div id="input-container">
-        <input type="number" id="text1" min="0" max="2999" step="1" style="width:50px" required value="25">
-        <input type="text" id="text2" maxlength="3" style="width:50px" required value="時">
+        <input type="number" id="text1" min="0" max="2999" step="1" style="width:50px" value="25">
+        <input type="text" id="text2" maxlength="3" style="width:50px" value="時">
         <select id="ten">
             <option value="、" selected>、</option>
             <option value="，">，</option>
         </select>
-        <input type="text" id="text3" maxlength="13" style="width:200px" required value="ナイトコードで"> 。<br>
+        <input type="text" id="text3" maxlength="13" style="width:200px" value="ナイトコードで"> 。<br>
 
         <div class="switch" id="transparent-switch">
             <input type="checkbox" id="transparent" checked>
@@ -47,9 +47,14 @@
         </div>
         <span id="transparent-text" data-i18n="transparent-background"></span>
         <input type="color" id="color-picker" value="#ffffff" style="visibility:hidden">
-        <br>
-        <button id="submit-btn" data-i18n="submit-btn" disabled></button>
-        <button id="download-btn" data-i18n="download-btn" disabled></button>
+        <div class="font-selector">
+            <input type="radio" id="font-min" name="kanji-font" value="min" checked>
+            <label for="font-min" data-i18n="font-min"></label>
+            <input type="radio" id="font-kai" name="kanji-font" value="kai">
+            <label for="font-kai" data-i18n="font-kai"></labe>
+        </div><br>
+        <button type="button" id="submit-btn" data-i18n="submit-btn" disabled></button>
+        <button type="button" id="download-btn" data-i18n="download-btn" disabled></button>
         <input type="range" id="slider" min="0" max="0" step="1" value="0" disabled>
     </div>
     <div id="canvas-container"></div>
