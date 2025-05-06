@@ -76,6 +76,84 @@ overlay.addEventListener('click', (e) => {
     }
 });
 
+const createTextElement = (text, x, y, fontSize, fontFamily, fill, fontWeight = 'normal') => {
+    const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textElement.setAttribute('x', x);
+    textElement.setAttribute('y', y);
+    textElement.setAttribute('font-size', fontSize);
+    textElement.setAttribute('font-family', fontFamily);
+    textElement.setAttribute('font-weight', fontWeight);
+    textElement.setAttribute('fill', fill);
+    textElement.textContent = text;
+    return textElement;
+};
+
+const drawChar = (g, char, charX, charY, fontSize, fontFamily, fill, fontWeight = 'normal') => {
+    const textElement = createTextElement(char, charX, charY, fontSize, fontFamily, fill, fontWeight);
+    g.appendChild(textElement);
+    
+    return textElement;
+}
+
+const drawGradientChar = (g, char, charX, charY, fontSize, fontFamily, fontWeight = 'normal') => {
+    return drawChar(g, char, charX, charY, fontSize, fontFamily, 'url(#gradient)', fontWeight);
+};
+
+const getKerning = (font, char1, char2, size = 0) => {
+    const glyph1 = font.charToGlyph(char1);
+    const glyph2 = font.charToGlyph(char2);
+    if (!glyph1 || !glyph2) {
+        return 0;
+    }
+    const kerning = font.getKerningValue(glyph1, glyph2);
+    if (size > 0) {
+        const unitsPerEm = font.unitsPerEm;
+        return (kerning * size) / unitsPerEm;
+    } else {
+        return kerning;
+    }
+};
+
+const drawHikari = (g, fill, startX, startY, size = false) => {
+    let endX, endY, ctrlX, ctrlY;
+    if (size) {
+        endX = startX + 96;
+        endY = startY + 110;
+        ctrlX = startX + 53;
+        ctrlY = startY + 49;
+    } else {
+        endX = startX - 171;
+        endY = startY + 294;
+        ctrlX = startX - 88;
+        ctrlY = startY + 130;
+    }
+
+    const strokePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    strokePath.setAttribute('d', `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY} Q ${startX + endX - ctrlX} ${startY + endY - ctrlY} ${startX} ${startY}`);
+    strokePath.setAttribute('fill', 'black');
+    strokePath.setAttribute('stroke', 'black');
+    strokePath.setAttribute('stroke-width', '16');
+    eraseMask.appendChild(strokePath);
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY} Q ${startX + endX - ctrlX} ${startY + endY - ctrlY} ${startX} ${startY}`);
+    path.setAttribute('fill', fill);
+    g.appendChild(path);
+};
+
+const drawTriangle = (g, fill, x1, y1, x2, y2, x3, y3) => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${x1},${y1} L${x2},${y2} L${x3},${y3} Z`);
+    path.setAttribute('fill', fill);
+    g.appendChild(path);
+};
+
+const drawSet = (paths) => {
+    paths.forEach(([func, ...args]) => {
+        func(...args);
+    });
+};
+
 window.onload = () => {
     fetch('kana.woff')
         .then((res) => res.arrayBuffer())
@@ -94,127 +172,120 @@ window.onload = () => {
                         slider.setAttribute('text3', text3);
 
                         canvasContainer.innerHTML = '';
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 2000;
-                        canvas.height = 366;
-                        canvasContainer.appendChild(canvas);
-                        const ctx = canvas.getContext('2d');
+                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('width', '2000');
+                        svg.setAttribute('height', '366');
+                        canvasContainer.appendChild(svg);
 
-                        ctx.lineWidth = 16;
-                        let strokeErase;
+                        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                        svg.appendChild(defs);
+                    
+                        const eraseMask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+                        defs.appendChild(eraseMask);
+                        eraseMask.setAttribute('id', 'eraseMask');
+                        const maskRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        maskRect.setAttribute('x', '0');
+                        maskRect.setAttribute('y', '0');
+                        maskRect.setAttribute('width', '100%');
+                        maskRect.setAttribute('height', '100%');
+                        maskRect.setAttribute('fill', 'white');
+                        eraseMask.appendChild(maskRect);
 
-                        if (transparentCheck.checked) {
-                            strokeErase = () => {
-                                ctx.globalCompositeOperation = 'destination-out';
-                                ctx.stroke();
-                                ctx.globalCompositeOperation = 'source-over';
-                            };
-                        } else {
-                            ctx.fillStyle = colorPicker.value;
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            strokeErase = () => {
-                                ctx.strokeStyle = colorPicker.value;
-                                ctx.stroke();
-                            };
+                        if (!transparentCheck.checked) {
+                            const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            bgRect.setAttribute('x', '0');
+                            bgRect.setAttribute('y', '0');
+                            bgRect.setAttribute('width', '100%');
+                            bgRect.setAttribute('height', '100%');
+                            bgRect.setAttribute('fill', colorPicker.value);
+                            svg.appendChild(bgRect);
                         }
 
-                        const drawGradientChar = (char, charX, charY) => {
-                            const measure = ctx.measureText(char);
-                            const gradient = ctx.createLinearGradient(charX + measure.width, charY - measure.actualBoundingBoxAscent, charX, charY + measure.actualBoundingBoxDescent);
-                            gradient.addColorStop(0.66, '#232838');
-                            gradient.addColorStop(1, '#a6a1d1');
-                            ctx.fillStyle = gradient;
-                            ctx.fillText(char, charX, charY);
-                        };
+                        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                        gradient.setAttribute('id', 'gradient');
+                        gradient.setAttribute('x1', '100%');
+                        gradient.setAttribute('y1', '0%');
+                        gradient.setAttribute('x2', '0%');
+                        gradient.setAttribute('y2', '100%');
+                        const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                        stop1.setAttribute('offset', '66%');
+                        stop1.setAttribute('stop-color', '#232838');
+                        const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                        stop2.setAttribute('offset', '100%');
+                        stop2.setAttribute('stop-color', '#a6a1d1');
+                        gradient.appendChild(stop1);
+                        gradient.appendChild(stop2);
+                        defs.appendChild(gradient);
 
-                        const getKerning = (font, char1, char2, size = 0) => {
-                            const glyph1 = font.charToGlyph(char1);
-                            const glyph2 = font.charToGlyph(char2);
-                            if (!glyph1 || !glyph2) {
-                                return 0;
-                            }
-                            const kerning = font.getKerningValue(glyph1, glyph2);
-                            if (size > 0) {
-                                const unitsPerEm = font.unitsPerEm;
-                                return (kerning * size) / unitsPerEm;
-                            } else {
-                                return kerning;
-                            }
-                        };
+                        const hikariGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                        hikariGradient.setAttribute('id', 'hikari-gradient');
+                        hikariGradient.setAttribute('x1', '100%');
+                        hikariGradient.setAttribute('y1', '0%');
+                        hikariGradient.setAttribute('x2', '0%');
+                        hikariGradient.setAttribute('y2', '100%');
+                        const hikariGradientReversed = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                        hikariGradientReversed.setAttribute('id', 'hikari-gradient-reversed');
+                        hikariGradientReversed.setAttribute('x1', '0%');
+                        hikariGradientReversed.setAttribute('y1', '0%');
+                        hikariGradientReversed.setAttribute('x2', '100%');
+                        hikariGradientReversed.setAttribute('y2', '100%');
+                        const hikariStops = [
+                            { offset: '6%', color: '#597cf7' },
+                            { offset: '20%', color: '#bfb6f7' },
+                            { offset: '30%', color: '#94b9ef' },
+                            { offset: '37%', color: '#a8e8fe' },
+                            { offset: '45%', color: '#dcf3cd' },
+                            { offset: '53%', color: '#c4bcf8' },
+                            { offset: '65%', color: '#6e8df7' },
+                            { offset: '75%', color: '#b2bdfb' },
+                            { offset: '82%', color: '#c6f0f7' },
+                            { offset: '86%', color: '#9aa0d3' },
+                            { offset: '91%', color: '#2c4184' }
+                        ];
+                        hikariStops.forEach(({ offset, color }) => {
+                            const stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                            stop.setAttribute('offset', offset);
+                            stop.setAttribute('stop-color', color);
+                            hikariGradient.appendChild(stop);
+                        });
+                        defs.appendChild(hikariGradient);
+                        hikariStops.forEach(({ offset, color }) => {
+                            const stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                            stop.setAttribute('offset', offset);
+                            stop.setAttribute('stop-color', color);
+                            hikariGradientReversed.appendChild(stop);
+                        });
+                        defs.appendChild(hikariGradientReversed);
 
-                        const drawHikari = (startX, startY, size = false) => {
-                            let endX, endY, ctrlX, ctrlY;
-                            if (size) {
-                                endX = startX + 96;
-                                endY = startY + 110;
-                                ctrlX = startX + 53;
-                                ctrlY = startY + 49;
-                            } else {
-                                endX = startX - 171;
-                                endY = startY + 294;
-                                ctrlX = startX - 88;
-                                ctrlY = startY + 130;
-                            }
+                        const triangleGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                        triangleGradient.setAttribute('id', 'triangle-gradient');
+                        triangleGradient.setAttribute('x1', '100%');
+                        triangleGradient.setAttribute('y1', '0%');
+                        triangleGradient.setAttribute('x2', '0%');
+                        triangleGradient.setAttribute('y2', '100%');
+                        const triangleStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                        triangleStop1.setAttribute('offset', '0%');
+                        triangleStop1.setAttribute('stop-color', '#2b2e44');
+                        const triangleStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                        triangleStop2.setAttribute('offset', '100%');
+                        triangleStop2.setAttribute('stop-color', '#555');
+                        triangleGradient.appendChild(triangleStop1);
+                        triangleGradient.appendChild(triangleStop2);
+                        defs.appendChild(triangleGradient);
 
-                            ctx.moveTo(startX, startY);
-                            ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
-                            ctx.quadraticCurveTo(startX + endX - ctrlX, startY + endY - ctrlY, startX, startY);
-
-                            const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
-                            gradient.addColorStop(0.06, '#597cf7');
-                            gradient.addColorStop(0.2, '#bfb6f7');
-                            gradient.addColorStop(0.3, '#94b9ef');
-                            gradient.addColorStop(0.37, '#a8e8fe');
-                            gradient.addColorStop(0.45, '#dcf3cd');
-                            gradient.addColorStop(0.53, '#c4bcf8');
-                            gradient.addColorStop(0.65, '#6e8df7');
-                            gradient.addColorStop(0.75, '#b2bdfb');
-                            gradient.addColorStop(0.82, '#c6f0f7');
-                            gradient.addColorStop(0.86, '#9aa0d3');
-                            gradient.addColorStop(0.91, '#2c4184');
-
-                            return gradient;
-                        };
-
-                        const drawTriangle = (x1, y1, x2, y2, x3, y3) => {
-                            ctx.moveTo(x1, y1);
-                            ctx.lineTo(x2, y2);
-                            ctx.lineTo(x3, y3);
-                            ctx.lineTo(x1, y1);
-
-                            const gradient = ctx.createLinearGradient(Math.max(x1, x2, x3), Math.min(y1, y2, y3), Math.min(x1, x2, x3), Math.max(y1, y2, y3));
-                            gradient.addColorStop(0, '#2b2e44');
-                            gradient.addColorStop(1, '#555');
-                            return gradient;
-                        };
-
-                        const drawSet = (paths) => {
-                            ctx.beginPath();
-                            for (let i = 0; i < paths.length; i++) {
-                                const [func, ...args] = paths[i];
-                                func(...args);
-                            }
-                            ctx.moveTo(paths[0][1], paths[0][2]);
-                            ctx.closePath();
-                            strokeErase();
-
-                            for (let i = 0; i < paths.length; i++) {
-                                const [func, ...args] = paths[i];
-                                ctx.beginPath();
-                                ctx.fillStyle = func(...args);
-                                ctx.closePath();
-                                ctx.fill();
-                            }
-                        };
-
-                        ctx.font = '255px figure';
+                        // Start drawing
+                        const gText1 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gText1.setAttribute('id', 'text1');
+                        gText1.setAttribute('mask', 'url(#eraseMask)');
+                        svg.appendChild(gText1);
                         text1 = text1.slice(0, -1).replace(/\d/g, (digit) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[digit]) + text1.slice(-1);
                         let textX = 44;
                         for (let i = 0; i < text1.length; i++) {
                             const textY = 208;
                             const char = text1[i];
-                            drawGradientChar(char, textX, textY);
-                            textX += ctx.measureText(char).width;
+                            const textElement = drawGradientChar(gText1, char, textX, textY, '255px', 'figure');
+                            const bbox = textElement.getBBox();
+                            textX = bbox.x + bbox.width;
                             if (i < text1.length - 1) {
                                 const kerning = getKerning(figureFont, text1[i], text1[i + 1], 255);
                                 textX += kerning;
@@ -222,14 +293,18 @@ window.onload = () => {
                         }
                         const hikari1X = textX + 76.58;
 
-                        ctx.fillStyle = '#000';
-                        ctx.font = `90px kana, ${currentFont}, serif`;
                         textX = hikari1X - 77;
                         let textY = 230;
                         let tenX = textX;
                         let tenY = textY;
+                        const gText2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gText2.setAttribute('id', 'text2');
+                        gText2.setAttribute('mask', 'url(#eraseMask)');
+                        svg.appendChild(gText2);
+                        let fontSize = '90px';
+                        let fontFamily = `kana, ${currentFont}, serif`;
                         for (let [i, char] of [...text2].entries()) {
-                            drawGradientChar(char, textX, textY);
+                            drawGradientChar(gText2, char, textX, textY, fontSize, fontFamily);
                             tenX = textX;
                             tenY = textY;
                             switch (i) {
@@ -249,11 +324,15 @@ window.onload = () => {
                         }
                         tenX += 78;
                         tenY += 6;
-                        ctx.font = '86px kana';
-                        ctx.fillText(ten, tenX, tenY);
+                        drawChar(svg, ten, tenX, tenY, '86px', 'kana', '#000');
                         textX = tenX + 54;
 
-                        ctx.font = `99px kana, ${currentFont}, serif`;
+                        const gText3 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gText3.setAttribute('id', 'text3');
+                        gText3.setAttribute('mask', 'url(#eraseMask)');
+                        svg.appendChild(gText3);
+                        fontSize = '99px';
+                        fontFamily = `kana, ${currentFont}, serif`;
                         textY = 240;
                         let rdIndex = [text3.length - 1];
                         if (text3.indexOf('cord') != -1) {
@@ -262,6 +341,11 @@ window.onload = () => {
                         }
                         text3 = text3.replace(/gg/g, '󰁧g');
                         for (let [i, char] of [...text3].entries()) {
+                            if (char == ' ') {
+                                textX += 49.5;
+                                continue;
+                            }
+                            let textElement = null;
                             if (i == 0) {
                                 let newChar = String.fromCharCode(char.charCodeAt(0) + 0xb000);
                                 if (char.charCodeAt(0) + 0xb000 >= 0xe000 && char.charCodeAt(0) + 0xb000 <= 0xf8ff && kanaFont.charToGlyph(newChar).unicode && text2.length < 3) {
@@ -269,29 +353,45 @@ window.onload = () => {
                                 } else {
                                     textX -= 16;
                                 }
-                                drawGradientChar(char, textX, textY);
+                                textElement = drawGradientChar(gText3, char, textX, textY, fontSize, fontFamily);
                             } else if (rdIndex.includes(i)) {
-                                drawGradientChar(char, textX, textY);
+                                textElement = drawGradientChar(gText3, char, textX, textY, fontSize, fontFamily);
                             } else {
-                                ctx.fillStyle = '#000';
-                                ctx.fillText(char, textX, textY);
+                                textElement = drawChar(gText3, char, textX, textY, fontSize, fontFamily, '#000');
                             }
-                            textX += ctx.measureText(char).width;
+                            const bbox = textElement.getBBox();
+                            textX = bbox.x + bbox.width;
                             if (i < text3.length - 1) {
                                 const kerning = getKerning(kanaFont, text3[i], text3[i + 1], 99);
                                 textX += kerning;
                             }
                         }
-                        ctx.font = 'bold 90px kana';
-                        drawGradientChar('。', textX - 9, textY);
+                        drawGradientChar(gText3, '。', textX - 9, textY, '90px', 'kana', 'bold');
+
+                        const gHikari = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gHikari.setAttribute('id', 'hikari');
+                        svg.appendChild(gHikari);
+                        const gHikari1 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gHikari1.setAttribute('id', 'hikari1');
+                        gHikari.appendChild(gHikari1);
+                        const gHikari1Triangle = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gHikari1Triangle.setAttribute('id', 'hikari1-triangle');
+                        gHikari1.appendChild(gHikari1Triangle);
 
                         drawSet([
-                            [drawHikari, hikari1X, 40],
-                            [drawTriangle, hikari1X - 31, 120, hikari1X - 23, 106, hikari1X - 18, 113],
-                            [drawTriangle, hikari1X - 138, 252, hikari1X - 150, 252, hikari1X - 147, 258],
-                            [drawTriangle, hikari1X - 99, 233, hikari1X - 113, 263, hikari1X - 97, 265],
-                            [drawTriangle, hikari1X - 93, 224, hikari1X - 87, 223, hikari1X - 89, 235]
+                            [drawHikari, gHikari1, 'url(#hikari-gradient)', hikari1X, 40],
+                            [drawTriangle, gHikari1Triangle, 'url(#triangle-gradient)', hikari1X - 31, 120, hikari1X - 23, 106, hikari1X - 18, 113],
+                            [drawTriangle, gHikari1Triangle, 'url(#triangle-gradient)', hikari1X - 138, 252, hikari1X - 150, 252, hikari1X - 147, 258],
+                            [drawTriangle, gHikari1Triangle, 'url(#triangle-gradient)', hikari1X - 99, 233, hikari1X - 113, 263, hikari1X - 97, 265],
+                            [drawTriangle, gHikari1Triangle, 'url(#triangle-gradient)', hikari1X - 93, 224, hikari1X - 87, 223, hikari1X - 89, 235]
                         ]);
+
+                        const gHikari2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gHikari2.setAttribute('id', 'hikari2');
+                        gHikari.appendChild(gHikari2);
+                        const gHikari2Triangle = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        gHikari2Triangle.setAttribute('id', 'hikari2-triangle');
+                        gHikari2.appendChild(gHikari2Triangle);
 
                         const sliderMax = Math.round(textX + 33);
                         const sliderMin = Math.min(sliderMax, Math.round(tenX + 180));
@@ -311,47 +411,47 @@ window.onload = () => {
                             hikari2X = sliderMax;
                         }
                         drawSet([
-                            [drawHikari, hikari2X - 150, 156, 1],
-                            [drawHikari, hikari2X, 35],
-                            [drawTriangle, hikari2X - 139, 153, hikari2X - 145, 143, hikari2X - 138, 141],
-                            [drawTriangle, hikari2X + 9, 131, hikari2X + 23, 117, hikari2X + 28, 126],
-                            [drawTriangle, hikari2X - 96, 249, hikari2X - 107, 255, hikari2X - 91, 270],
-                            [drawTriangle, hikari2X - 116, 279, hikari2X - 126, 293, hikari2X - 117, 296]
+                            [drawHikari, gHikari2, 'url(#hikari-gradient-reversed)', hikari2X - 150, 156, 1],
+                            [drawHikari, gHikari2, 'url(#hikari-gradient)', hikari2X, 35],
+                            [drawTriangle, gHikari2Triangle, 'url(#triangle-gradient)', hikari2X - 139, 153, hikari2X - 145, 143, hikari2X - 138, 141],
+                            [drawTriangle, gHikari2Triangle, 'url(#triangle-gradient)', hikari2X + 9, 131, hikari2X + 23, 117, hikari2X + 28, 126],
+                            [drawTriangle, gHikari2Triangle, 'url(#triangle-gradient)', hikari2X - 96, 249, hikari2X - 107, 255, hikari2X - 91, 270],
+                            [drawTriangle, gHikari2Triangle, 'url(#triangle-gradient)', hikari2X - 116, 279, hikari2X - 126, 293, hikari2X - 117, 296]
                         ]);
 
-                        const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        canvas.width = textX + 73;
-                        ctx.putImageData(data, 0, 0);
-
-                        submitBtn.dataset.i18n = 'submit-btn-update';
-                        submitBtn.textContent = i18n.getText('submit-btn-update');
-
+                        svg.setAttribute('width', textX + 73);
+                        
                         downloadBtn.removeAttribute('disabled');
-                        downloadBtn.addEventListener('click', () => {
-                            if (watermarkCheck.checked) {
-                                ctx.font = '17px figure';
-                                ctx.globalAlpha = 0.7;
-                                ctx.fillText('焰', canvas.width - 205, 15);
-                                ctx.globalAlpha = 1;
-                            }
+                    };
 
+                    submitBtn.dataset.i18n = 'submit-btn-update';
+                    submitBtn.textContent = i18n.getText('submit-btn-update');
+
+                    downloadBtn.addEventListener('click', () => {
+                        const svg = canvasContainer.querySelector('svg');
+                        if (watermarkCheck.checked) {
+                            drawChar(svg, '焰', svg.getAttribute('width') - 205, 15, '17px', 'figure', 'rgba(0, 0, 0, 0.7)');
+                        }
+
+                        const serializer = new XMLSerializer();
+                        const svgString = serializer.serializeToString(svg);
+                        let session = new SvgTextToPath(svgString, {
+                            useFontFace: true,
+                        });
+                        session.replaceAll().then(() => {
+                            const svgString = session.getSvgString();
+                            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                            const url = URL.createObjectURL(blob);
                             const img = new Image();
-                            img.src = canvas.toDataURL('image/png');
+                            img.src = url;
                             popup.innerHTML = '<span id="close-btn">×</span>';
                             popup.appendChild(img);
                             overlay.style.display = 'flex';
-
-                            if (transparentCheck.checked) {
-                                ctx.clearRect(canvas.width - 205, 0, canvas.width, 20);
-                            } else {
-                                ctx.fillStyle = colorPicker.value;
-                                ctx.fillRect(canvas.width - 205, 0, canvas.width, 20);
-                            }
                         });
+                    });
 
-                        nightcord.style.cursor = 'pointer';
-                        nightcord.addEventListener('click', nightcordEvent);
-                    };
+                    nightcord.style.cursor = 'pointer';
+                    nightcord.addEventListener('click', nightcordEvent);
 
                     const submit = () => {
                         const text1 = text1Input.value;
